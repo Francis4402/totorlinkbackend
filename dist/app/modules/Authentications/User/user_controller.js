@@ -19,22 +19,33 @@ const config_1 = __importDefault(require("../../../config"));
 const sendResponse_1 = __importDefault(require("../../../utils/sendResponse"));
 const http_status_codes_1 = require("http-status-codes");
 const registerUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield user_services_1.UserServices.registerUser(req.body);
-    const { refreshToken, accessToken } = result;
-    res.cookie('refreshToken', refreshToken, {
-        secure: config_1.default.node_env === 'production',
-        httpOnly: true,
-        sameSite: 'none',
-        maxAge: 1000 * 60 * 60 * 24 * 365,
-    });
-    (0, sendResponse_1.default)(res, {
-        statusCode: http_status_codes_1.StatusCodes.OK,
-        success: true,
-        message: 'User registration completed successfully!',
-        data: {
-            accessToken,
-        },
-    });
+    try {
+        const result = yield user_services_1.UserServices.registerUser(req.body);
+        const { refreshToken, accessToken } = result;
+        res.cookie('refreshToken', refreshToken, {
+            secure: config_1.default.node_env === 'production',
+            httpOnly: true,
+            sameSite: 'none',
+            maxAge: 1000 * 60 * 60 * 24 * 365,
+        });
+        (0, sendResponse_1.default)(res, {
+            statusCode: http_status_codes_1.StatusCodes.OK,
+            success: true,
+            message: 'User registration completed successfully!',
+            data: {
+                accessToken,
+            },
+        });
+    }
+    catch (error) {
+        // Handle errors and return a JSON response
+        (0, sendResponse_1.default)(res, {
+            statusCode: http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR,
+            success: false,
+            message: 'An error occurred during registration',
+            data: undefined
+        });
+    }
 }));
 const getAllUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield user_services_1.UserServices.getAllUser(req.query);

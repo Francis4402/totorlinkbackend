@@ -18,7 +18,7 @@ const user_interface_1 = require("./user_interface");
 const AppError_1 = __importDefault(require("../../../errors/AppError"));
 const http_status_codes_1 = require("http-status-codes");
 const auth_service_1 = require("../Auth/auth_service");
-const customer_model_1 = __importDefault(require("../Customer/customer_model"));
+const personaldata_model_1 = __importDefault(require("../PersonalData/personaldata_model"));
 const user_constant_1 = require("./user_constant");
 const QueryBuilder_1 = __importDefault(require("../../../builder/QueryBuilder"));
 const user_model_1 = __importDefault(require("./user_model"));
@@ -38,7 +38,7 @@ const registerUser = (userData) => __awaiter(void 0, void 0, void 0, function* (
         // Create the user
         const user = new user_model_1.default(userData);
         const createdUser = yield user.save({ session });
-        const profile = new customer_model_1.default({
+        const profile = new personaldata_model_1.default({
             user: createdUser._id,
         });
         yield profile.save({ session });
@@ -76,7 +76,7 @@ const myProfile = (authUser) => __awaiter(void 0, void 0, void 0, function* () {
     if (!isUserExists.isActive) {
         throw new AppError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, "User is not active!");
     }
-    const profile = yield customer_model_1.default.findOne({ user: isUserExists._id });
+    const profile = yield personaldata_model_1.default.findOne({ user: isUserExists._id });
     return Object.assign(Object.assign({}, isUserExists.toObject()), { profile: profile || null });
 });
 const updateProfile = (payload, file, authUser) => __awaiter(void 0, void 0, void 0, function* () {
@@ -90,7 +90,7 @@ const updateProfile = (payload, file, authUser) => __awaiter(void 0, void 0, voi
     if (file && file.path) {
         payload.photo = file.path;
     }
-    const result = yield customer_model_1.default.findOneAndUpdate({ user: authUser.userId }, payload, {
+    const result = yield personaldata_model_1.default.findOneAndUpdate({ user: authUser.userId }, payload, {
         new: true,
     }).populate('user');
     return result;
